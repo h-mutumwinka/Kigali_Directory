@@ -47,7 +47,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   leading: CircleAvatar(
                     backgroundColor: Colors.blue.shade100,
                     child: Text(
-                      user?.displayName?.substring(0, 1).toUpperCase() ?? 'G',
+                      (user?.displayName ?? user?.email ?? 'G').substring(0, 1).toUpperCase(),
                       style: TextStyle(
                         color: Colors.blue.shade900,
                         fontWeight: FontWeight.bold,
@@ -56,10 +56,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     ),
                   ),
                   title: Text(
-                    user?.displayName ?? "Guest User",
+                    user?.displayName ?? user?.email?.split('@')[0] ?? "Guest User",
                     style: const TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text(user?.email ?? "Not logged in"),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(user?.email ?? "Not logged in"),
+                      Text(
+                        'ID: ${user?.uid ?? 'none'}',
+                        style: const TextStyle(fontSize: 11, color: Colors.grey),
+                      ),
+                    ],
+                  ),
                   trailing: Icon(Icons.verified, 
                     color: user != null ? Colors.green : Colors.grey,
                   ),

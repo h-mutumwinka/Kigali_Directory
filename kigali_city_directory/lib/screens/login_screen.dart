@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart' as auth;
 import 'signup_screen.dart';
@@ -32,57 +33,81 @@ class _LoginScreenState extends State<LoginScreen> {
     try {
       final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
       
-      // Simple demo login - accept any email/password
-      // In real app, this would call Firebase authentication
-      await Future.delayed(const Duration(seconds: 1)); // Simulate network delay
-      
-      // Check if Firebase is available
-      final user = await authProvider.login(
+      await authProvider.login(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
-      
-      // If Firebase login failed (returns null), use demo mode
-      if (user == null) {
-        // Use the email from the form for demo mode
-        authProvider.setDemoMode(
-          email: _emailController.text.trim(),
-          displayName: _emailController.text.trim().split('@')[0],
-        );
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ Logged in with Demo Mode'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ Login successful!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-        }
-      }
-    } catch (e) {
-      // If any error occurs, fall back to demo mode
-      final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
-      authProvider.setDemoMode(
-        email: _emailController.text.trim(),
-        displayName: _emailController.text.trim().split('@')[0],
-      );
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Logged in with Demo Mode'),
+            content: Text('✅ Login successful!'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'user-not-found':
+          message = 'No account found for this email. Please sign up first.';
+          break;
+        case 'wrong-password':
+          message = 'Incorrect password. Please try again.';
+          break;
+        case 'invalid-credential':
+          message = 'Incorrect email or password. Please check and try again.';
+          break;
+        case 'invalid-email':
+          message = 'Invalid email address format.';
+          break;
+        case 'user-disabled':
+          message = 'This account has been disabled.';
+          break;
+        case 'too-many-requests':
+          message = 'Too many failed attempts. Please try again later.';
+          break;
+        case 'network-request-failed':
+          message = 'Network error. Check your internet connection.';
+          break;
+        case 'operation-not-allowed':
+          message = 'Email/Password login is not enabled in Firebase Console.\nGo to Authentication → Sign-in method → Enable Email/Password.';
+          break;
+        case 'channel-error':
+          message = 'Firebase connection error. Make sure SHA-1 fingerprint is added in Firebase Console.';
+          break;
+        default:
+          message = 'Error [${e.code}]: ${e.message ?? 'Login failed.'}';
+      }
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Login Failed', style: TextStyle(color: Colors.red)),
+            content: Text(message),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        showDialog(
+          context: context,
+          builder: (_) => AlertDialog(
+            title: const Text('Error', style: TextStyle(color: Colors.red)),
+            content: Text(e.toString()),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('OK'),
+              ),
+            ],
           ),
         );
       }
@@ -91,15 +116,6 @@ class _LoginScreenState extends State<LoginScreen> {
         setState(() => _isLoading = false);
       }
     }
-  }
-
-  Future<void> _demoLogin() async {
-    // Skip authentication and go directly to app
-    final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
-    authProvider.setDemoMode(
-      email: 'demo@kigali.rw',
-      displayName: 'Demo User',
-    );
   }
 
   @override
@@ -223,30 +239,6 @@ class _LoginScreenState extends State<LoginScreen> {
                                 color: Colors.white,
                               ),
                             ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  // Demo Login Button (for when Firebase is not configured)
-                  SizedBox(
-                    width: double.infinity,
-                    height: 50,
-                    child: OutlinedButton.icon(
-                      onPressed: _demoLogin,
-                      icon: const Icon(Icons.play_arrow, color: Colors.orange),
-                      label: const Text(
-                        'Demo Mode (No Authentication)',
-                        style: TextStyle(
-                          fontSize: 16,
-                          color: Colors.orange,
-                        ),
-                      ),
-                      style: OutlinedButton.styleFrom(
-                        side: const BorderSide(color: Colors.orange, width: 2),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
                     ),
                   ),
                   const SizedBox(height: 16),

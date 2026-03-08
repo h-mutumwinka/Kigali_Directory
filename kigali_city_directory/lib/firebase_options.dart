@@ -39,21 +39,20 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'YOUR_WEB_API_KEY',
-    appId: '1:YOUR_APP_ID:web:YOUR_WEB_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'your-project-id',
-    authDomain: 'your-project-id.firebaseapp.com',
-    storageBucket: 'your-project-id.firebasestorage.app',
-    measurementId: 'G-YOUR_MEASUREMENT_ID',
+    apiKey: 'AIzaSyB9jV1nyzrvB3J3-qEMlDhKw0h-kcwf2Ms',
+    appId: '1:747802091428:web:REPLACE_WITH_WEB_APP_ID',
+    messagingSenderId: '747802091428',
+    projectId: 'kigali-city-81f21',
+    authDomain: 'kigali-city-81f21.firebaseapp.com',
+    storageBucket: 'kigali-city-81f21.firebasestorage.app',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'YOUR_ANDROID_API_KEY',
-    appId: '1:YOUR_APP_ID:android:YOUR_ANDROID_APP_ID',
-    messagingSenderId: 'YOUR_SENDER_ID',
-    projectId: 'your-project-id',
-    storageBucket: 'your-project-id.firebasestorage.app',
+    apiKey: 'AIzaSyB9jV1nyzrvB3J3-qEMlDhKw0h-kcwf2Ms',
+    appId: '1:747802091428:android:fd2af48870707245df6b31',
+    messagingSenderId: '747802091428',
+    projectId: 'kigali-city-81f21',
+    storageBucket: 'kigali-city-81f21.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(

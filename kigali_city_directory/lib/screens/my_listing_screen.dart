@@ -20,6 +20,8 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
     final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
 
     final currentUserId = authProvider.user?.uid ?? "";
+    
+    print('🔍 My Listings - Current User ID: $currentUserId');
 
     return Scaffold(
       appBar: AppBar(
@@ -37,9 +39,49 @@ class _MyListingsScreenState extends State<MyListingsScreen> {
           final myPlaces = snapshot.data!
               .where((place) => place.userId == currentUserId)
               .toList();
+          
+          print('🔍 Total places: ${snapshot.data!.length}');
+          print('🔍 My places: ${myPlaces.length}');
+          for (var place in snapshot.data!) {
+            print('   Place: ${place.name}, userId: ${place.userId}');
+          }
 
           if (myPlaces.isEmpty) {
-            return const Center(child: Text("You have no listings yet"));
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  const Icon(Icons.location_off, size: 80, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text(
+                    "You have no listings yet",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    "Your ID: $currentUserId",
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 16),
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const CreatePlaceScreen(),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.add),
+                    label: const Text("Create Your First Listing"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFF0D1B2A),
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                    ),
+                  ),
+                ],
+              ),
+            );
           }
 
           return ListView.builder(

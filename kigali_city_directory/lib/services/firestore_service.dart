@@ -1,19 +1,43 @@
-import 'dart:async';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import '../models/place_model.dart';
 
 class FirestoreService {
-  final List<Place> _localPlaces = [];
-  final StreamController<List<Place>> _localPlacesController =
-      StreamController<List<Place>>.broadcast();
+  final FirebaseFirestore _db = FirebaseFirestore.instance;
 
-  FirestoreService() {
-    // Add sample data for offline/web demo
-    _localPlaces.addAll([
+  CollectionReference<Map<String, dynamic>> get places =>
+      _db.collection("places");
+
+  Future createPlace(Place place) async {
+    await places.add(place.toMap());
+  }
+
+  Future updatePlace(Place place) async {
+    await places.doc(place.id).update(place.toMap());
+  }
+
+  Future deletePlace(String id) async {
+    await places.doc(id).delete();
+  }
+
+  Stream<List<Place>> getPlaces() {
+    return places
+        .orderBy('timestamp', descending: true)
+        .snapshots()
+        .map((snapshot) {
+      return snapshot.docs.map((doc) {
+        return Place.fromMap(doc.data(), doc.id);
+      }).toList();
+    });
+  }
+
+  // Seeds initial Kigali places if Firestore is empty
+  Future<void> seedInitialData(String userId) async {
+    final existing = await places.limit(1).get();
+    if (existing.docs.isNotEmpty) return;
+
+    final initialPlaces = [
       Place(
-        id: '1',
+        id: '',
         name: 'King Faisal Hospital',
         category: 'Hospital',
         address: 'KG 544 St, Kigali',
@@ -21,11 +45,11 @@ class FirestoreService {
         description: 'One of the leading hospitals in Kigali providing quality healthcare services.',
         latitude: -1.9536,
         longitude: 30.0906,
-        userId: 'demo-user',
+        userId: userId,
         timestamp: DateTime.now(),
       ),
       Place(
-        id: '2',
+        id: '',
         name: 'Kigali Public Library',
         category: 'Library',
         address: 'KN 4 Ave, Kigali',
@@ -33,11 +57,11 @@ class FirestoreService {
         description: 'Public library with a vast collection of books and digital resources.',
         latitude: -1.9441,
         longitude: 30.0619,
-        userId: 'demo-user',
-        timestamp: DateTime.now(),
+        userId: userId,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 1)),
       ),
       Place(
-        id: '3',
+        id: '',
         name: 'Heaven Restaurant',
         category: 'Restaurant',
         address: 'KG 7 Ave, Kigali',
@@ -45,11 +69,11 @@ class FirestoreService {
         description: 'Popular restaurant with amazing views of Kigali city.',
         latitude: -1.9500,
         longitude: 30.0600,
-        userId: 'demo-user',
-        timestamp: DateTime.now(),
+        userId: userId,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 2)),
       ),
       Place(
-        id: '4',
+        id: '',
         name: 'Kigali Genocide Memorial',
         category: 'Tourist Attraction',
         address: 'KG 14 Ave, Gisozi',
@@ -57,11 +81,11 @@ class FirestoreService {
         description: 'Memorial site commemorating the 1994 genocide against the Tutsi.',
         latitude: -1.9558,
         longitude: 30.0871,
-        userId: 'demo-user',
-        timestamp: DateTime.now(),
+        userId: userId,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 3)),
       ),
       Place(
-        id: '5',
+        id: '',
         name: 'Bourbon Coffee Café',
         category: 'Café',
         address: 'Union Trade Center, Kigali',
@@ -69,76 +93,16 @@ class FirestoreService {
         description: 'Premium coffee shop serving authentic Rwandan coffee.',
         latitude: -1.9489,
         longitude: 30.0611,
-        userId: 'demo-user',
-        timestamp: DateTime.now(),
+        userId: userId,
+        timestamp: DateTime.now().subtract(const Duration(minutes: 4)),
       ),
-    ]);
-    _localPlacesController.add(List<Place>.from(_localPlaces));
-  }
+    ];
 
-  FirebaseFirestore? get _db =>
-      Firebase.apps.isNotEmpty ? FirebaseFirestore.instance : null;
-
-  CollectionReference<Map<String, dynamic>>? get places =>
-      _db?.collection("places");
-
-  Future createPlace(Place place) async {
-    if (places != null) {
-      await places!.add(place.toMap());
-      return;
+    final batch = _db.batch();
+    for (final place in initialPlaces) {
+      final doc = places.doc();
+      batch.set(doc, place.toMap());
     }
-
-    final localPlace = Place(
-      id: DateTime.now().microsecondsSinceEpoch.toString(),
-      name: place.name,
-      category: place.category,
-      address: place.address,
-      contact: place.contact,
-      description: place.description,
-      latitude: place.latitude,
-      longitude: place.longitude,
-      userId: place.userId,
-      timestamp: place.timestamp,
-    );
-
-    _localPlaces.add(localPlace);
-    _localPlacesController.add(List<Place>.from(_localPlaces));
-  }
-
-  Future updatePlace(Place place) async {
-    if (places != null) {
-      await places!.doc(place.id).update(place.toMap());
-      return;
-    }
-
-    final index = _localPlaces.indexWhere(
-      (existing) => existing.id == place.id,
-    );
-    if (index != -1) {
-      _localPlaces[index] = place;
-      _localPlacesController.add(List<Place>.from(_localPlaces));
-    }
-  }
-
-  Future deletePlace(String id) async {
-    if (places != null) {
-      await places!.doc(id).delete();
-      return;
-    }
-
-    _localPlaces.removeWhere((place) => place.id == id);
-    _localPlacesController.add(List<Place>.from(_localPlaces));
-  }
-
-  Stream<List<Place>> getPlaces() {
-    if (places == null) {
-      return _localPlacesController.stream;
-    }
-
-    return places!.snapshots().map((snapshot) {
-      return snapshot.docs.map((doc) {
-        return Place.fromMap(doc.data(), doc.id);
-      }).toList();
-    });
+    await batch.commit();
   }
 }

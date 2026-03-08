@@ -11,6 +11,8 @@ class MyBookingsScreen extends StatelessWidget {
     final bookingProvider = Provider.of<BookingProvider>(context);
     final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
     final userId = authProvider.user?.uid ?? '';
+    
+    print('🔍 My Bookings - User ID: $userId');
 
     return Scaffold(
       appBar: AppBar(
@@ -25,17 +27,24 @@ class MyBookingsScreen extends StatelessWidget {
           }
 
           final bookings = snapshot.data!;
+          
+          print('🔍 Total bookings for $userId: ${bookings.length}');
 
           if (bookings.isEmpty) {
-            return const Center(
+            return Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.event_busy, size: 80, color: Colors.grey),
-                  SizedBox(height: 16),
-                  Text(
+                  const Icon(Icons.event_busy, size: 80, color: Colors.grey),
+                  const SizedBox(height: 16),
+                  const Text(
                     'No bookings yet',
                     style: TextStyle(fontSize: 18, color: Colors.grey),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Your ID: $userId',
+                    style: const TextStyle(fontSize: 12, color: Colors.grey),
                   ),
                 ],
               ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart' as auth;
 
@@ -34,60 +35,57 @@ class _SignUpScreenState extends State<SignUpScreen> {
     try {
       final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
       
-      // Simulate signup delay
-      await Future.delayed(const Duration(seconds: 1));
-      
-      final user = await authProvider.signUp(
+      await authProvider.signUp(
         _emailController.text.trim(),
         _passwordController.text.trim(),
       );
 
-      // If Firebase signup failed, use demo mode
-      if (user == null) {
-        authProvider.setDemoMode(
-          email: _emailController.text.trim(),
-          displayName: _emailController.text.trim().split('@')[0],
-        );
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ Account created with Demo Mode!'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-          // Go back to login screen (which will automatically show home)
-          Navigator.pop(context);
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('✅ Account created! Please verify your email.'),
-              backgroundColor: Colors.green,
-              duration: Duration(seconds: 2),
-            ),
-          );
-          Navigator.pop(context);
-        }
-      }
-    } catch (e) {
-      // If error, fall back to demo mode
-      final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
-      authProvider.setDemoMode(
-        email: _emailController.text.trim(),
-        displayName: _emailController.text.trim().split('@')[0],
-      );
-      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Account created with Demo Mode!'),
+            content: Text('✅ Account created! Please verify your email.'),
             backgroundColor: Colors.green,
-            duration: Duration(seconds: 2),
+            duration: Duration(seconds: 3),
           ),
         );
         Navigator.pop(context);
+      }
+    } on FirebaseAuthException catch (e) {
+      String message;
+      switch (e.code) {
+        case 'email-already-in-use':
+          message = 'An account already exists for this email.';
+          break;
+        case 'invalid-email':
+          message = 'Invalid email address.';
+          break;
+        case 'weak-password':
+          message = 'Password is too weak. Use at least 6 characters.';
+          break;
+        case 'operation-not-allowed':
+          message = 'Email/password sign-up is not enabled.';
+          break;
+        default:
+          message = e.message ?? 'Sign up failed. Please try again.';
+      }
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ $message'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('❌ Sign up failed: ${e.toString()}'),
+            backgroundColor: Colors.red,
+            duration: const Duration(seconds: 3),
+          ),
+        );
       }
     } finally {
       if (mounted) {

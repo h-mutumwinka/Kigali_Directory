@@ -1,139 +1,195 @@
-# kigali_city_directory
+# Kigali City Directory
 
-A Flutter-based Kigali Directory app with Firebase backend integration for listing and discovering places in Kigali.
+A Flutter mobile application for discovering and managing places in Kigali, Rwanda. Built with Firebase Authentication, Cloud Firestore, Provider state management, and OpenStreetMap integration.
+
+---
 
 ## Features
 
-- 📍 Browse and search places in Kigali
-- 🗺️ Google Maps integration
-- 🔐 Firebase Authentication (optional)
-- ☁️ Cloud Firestore for data storage (works offline too)
-- 📝 Create, edit, and manage your own listings
-- 🔍 Search by name or category
-- 📱 Cross-platform support (Android, iOS, Web)
+- 🔐 **Firebase Authentication** — Signup, login, logout with email verification
+- 📍 **Location Listings (CRUD)** — Create, read, update, and delete place listings
+- 🔍 **Search & Filter** — Search by name, filter by category in real-time
+- 🗺️ **Interactive Map** — OpenStreetMap with markers for all listings
+- 📌 **Listing Detail** — Embedded map preview + Google Maps navigation launch
+- 👤 **My Listings** — View and manage only your own listings
+- ⚙️ **Settings** — User profile display, notification toggles, dark/light theme
+- ☁️ **Real-time Firestore** — All changes reflect instantly across screens
 
-## Getting Started
+---
+
+## Firebase Setup
 
 ### Prerequisites
+- Flutter SDK 3.10.4+
+- Firebase project: `kigali-city-81f21`
+- Android: `google-services.json` in `android/app/`
 
-- Flutter SDK installed (3.10.4 or higher)
-- Android Studio / Xcode for mobile development
-- Google Maps API key (for map features)
-- Firebase project (optional - app works offline without it)
+### Firebase Services Used
+| Service | Purpose |
+|---|---|
+| Firebase Authentication | Email/password signup, login, logout, email verification |
+| Cloud Firestore | Real-time database for place listings and user profiles |
 
-### Installation
+### Authentication Setup
+1. Firebase Console → Authentication → Sign-in method → Enable **Email/Password**
+2. Email verification is enforced — users cannot access the app until email is verified
 
-1. **Clone the repository**
-   ```bash
-   cd kigali_city_directory
-   ```
+### Firestore Setup
+1. Firebase Console → Firestore Database → Create database
+2. Security Rules:
+```
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+    }
+    match /places/{placeId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update, delete: if request.auth != null
+        && request.auth.uid == resource.data.userId;
+    }
+  }
+}
+```
 
-2. **Install dependencies**
-   ```bash
-   flutter pub get
-   ```
+---
 
-3. **Configure Google Maps API Key**
-   - Get an API key from [Google Cloud Console](https://console.cloud.google.com/)
-   - Enable "Maps SDK for Android" and "Maps SDK for iOS"
-   - Replace `YOUR_GOOGLE_MAPS_API_KEY_HERE` in:
-     - `android/app/src/main/AndroidManifest.xml` (line 13)
+## Firestore Database Structure
 
-4. **Configure Firebase (Optional)**
-   
-   The app works WITHOUT Firebase using local storage, but to enable cloud sync:
-   
-   - Create a Firebase project at [Firebase Console](https://console.firebase.google.com/)
-   - Add Android/iOS/Web apps to your Firebase project
-   - Download `google-services.json` for Android → place in `android/app/`
-   - Download `GoogleService-Info.plist` for iOS → place in `ios/Runner/`
-   - Run: `flutterfire configure` to generate proper config
-   - Or manually update `lib/firebase_options.dart` with your Firebase config
+### Collection: `users`
+```
+users/
+  {uid}/
+    uid: string
+    email: string
+    displayName: string
+    createdAt: timestamp
+```
 
-5. **Run the app**
-   ```bash
-   flutter run
-   ```
+### Collection: `places`
+```
+places/
+  {docId}/
+    name: string
+    category: string        // Hospital, Café, Restaurant, etc.
+    address: string
+    contact: string
+    description: string
+    latitude: number
+    longitude: number
+    userId: string          // UID of the creator
+    timestamp: timestamp
+```
 
-## Configuration Files Updated
+---
 
-The following files have been fixed:
-- ✅ `android/app/build.gradle.kts` - Fixed Firebase plugin configuration
-- ✅ `android/build.gradle.kts` - Added proper dependencies
-- ✅ `android/app/src/main/AndroidManifest.xml` - Added Maps API key and permissions
-- ✅ `lib/firebase_options.dart` - Created Firebase options file
-- ✅ `lib/main.dart` - Updated Firebase initialization
-- ✅ `lib/screens/navigation_screen.dart` - Fixed bottom navigation bar
-- ✅ `lib/screens/settings_screen.dart` - Connected to auth provider
-- ✅ `lib/providers/auth_provider.dart` - Auto-detect logged-in user
+## State Management — Provider
 
-## Usage
+The app uses the **Provider** package for state management with a strict separation of concerns:
 
-### Without Firebase (Local Mode)
-The app works immediately with local storage. You can:
-- Add places (stored locally)
-- Browse and search places
-- Use all features except cloud sync
+```
+UI Widgets
+    ↓  (reads state via Provider.of / Consumer)
+Providers  (AuthProvider, PlaceProvider)
+    ↓  (calls methods on)
+Services   (AuthService, FirestoreService)
+    ↓  (communicates with)
+Firebase   (FirebaseAuth, FirebaseFirestore)
+```
 
-### With Firebase (Cloud Mode)
-Once configured:
-- Sign up / Login to create an account
-- Places sync across devices
-- Real-time updates
+| Provider | Responsibility |
+|---|---|
+| `AuthProvider` | Holds current user, exposes login/signup/logout |
+| `PlaceProvider` | Exposes place stream, add/update/delete methods |
+| `ThemeProvider` | Light/dark theme switching |
+| `BookingProvider` | Booking state management |
 
-### Adding a Place
-1. Tap the "+" button on Home or My Listings screen
-2. Fill in details (name, category, address, contact, description)
-3. Enter latitude and longitude (e.g., -1.9441 for Kigali latitude, 30.0619 for longitude)
-4. Tap "Save"
+**UI widgets never call Firebase directly** — all Firebase operations go through the service layer.
 
-### Using the Map
-- Tap the map icon in the app bar or bottom navigation
-- View all places on Google Maps
-- Tap markers to see place details
+---
 
-## Important Notes
+## Navigation Structure
 
-1. **Google Maps API Key**: The map feature requires a valid API key. Get one from Google Cloud Console.
+```
+AuthWrapper
+├── LoginScreen         (if not logged in)
+├── EmailVerificationScreen  (if logged in but not verified)
+└── MainNavigationScreen    (if fully authenticated)
+      ├── Tab 0: PlacesListScreen    (Directory)
+      ├── Tab 1: MyListingsScreen    (My Listings)
+      ├── Tab 2: BookingsScreen      (Bookings)
+      ├── Tab 3: MapScreen           (Map View)
+      └── Tab 4: SettingsScreen      (Settings)
+```
 
-2. **Firebase (Optional)**: The app is designed to work offline. Firebase is only needed for:
-   - User authentication
-   - Cloud data sync
-   - Multi-device access
+---
 
-3. **Coordinates**: Use these default coordinates for Kigali:
-   - Latitude: -1.9441
-   - Longitude: 30.0619
+## Installation
 
-## Troubleshooting
+```bash
+# Clone the repository
+git clone <repo-url>
+cd kigali_city_directory
 
-**Map not showing?**
-- Ensure Google Maps API key is properly configured in AndroidManifest.xml
-- Enable required APIs in Google Cloud Console
+# Install dependencies
+flutter pub get
 
-**Firebase errors?**
-- The app works without Firebase, so these can be ignored
-- To fix: Configure Firebase properly or leave it in local mode
+# Run on Android
+flutter run
+```
 
-**Build errors?**
-- Run `flutter clean && flutter pub get`
-- Ensure Android SDK and build tools are installed
+---
 
 ## Project Structure
 
 ```
 lib/
-├── main.dart                 # App entry point
-├── firebase_options.dart     # Firebase configuration
-├── models/                   # Data models
-├── providers/                # State management
-├── screens/                  # UI screens
-├── services/                 # Backend services
-└── widgets/                  # Reusable widgets
+├── main.dart                     # App entry point, Firebase init, MultiProvider
+├── firebase_options.dart         # Firebase configuration per platform
+├── models/
+│   ├── place_model.dart          # Place data model + Firestore serialization
+│   ├── user_model.dart           # UserProfile model
+│   └── booking_model.dart        # Booking model
+├── providers/
+│   ├── auth_provider.dart        # Authentication state
+│   ├── place_provider.dart       # Place listings state
+│   ├── booking_provider.dart     # Bookings state
+│   └── theme_provider.dart       # Theme state
+├── services/
+│   ├── auth_service.dart         # Firebase Auth operations
+│   ├── firestore_service.dart    # Firestore CRUD + seed data
+│   ├── user_service.dart         # User profile Firestore operations
+│   └── booking_service.dart      # Booking Firestore operations
+├── screens/
+│   ├── auth_wrapper.dart         # Auth state router
+│   ├── login_screen.dart
+│   ├── signup_screen.dart
+│   ├── email_verification_screen.dart
+│   ├── navigation_screen.dart    # BottomNavigationBar
+│   ├── place_list_screen.dart    # Directory (search + filter)
+│   ├── my_listing_screen.dart    # User's own listings
+│   ├── create_place_screen.dart  # Add new listing
+│   ├── edit_place_screen.dart    # Edit listing
+│   ├── listing_detail_screen.dart # Detail + embedded map
+│   ├── screen_map.dart           # Full map with all markers
+│   └── settings_screen.dart      # Profile + preferences
+└── widgets/
+    └── listing_cards.dart        # Reusable place card widget
 ```
 
-## Resources
+---
 
-- [Flutter Documentation](https://docs.flutter.dev/)
-- [Firebase Documentation](https://firebase.google.com/docs)
-- [Google Maps Flutter Plugin](https://pub.dev/packages/google_maps_flutter)
+## Dependencies
+
+```yaml
+firebase_core: ^3.15.2
+firebase_auth: ^5.3.1
+cloud_firestore: ^5.6.12
+provider: ^6.1.2
+flutter_map: ^7.0.2
+latlong2: ^0.9.1
+url_launcher: ^6.3.0
+```
+

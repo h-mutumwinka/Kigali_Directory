@@ -1,37 +1,29 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_core/firebase_core.dart';
 import '../models/user_model.dart';
 import 'user_service.dart';
 
 class AuthService {
   final UserService _userService = UserService();
 
-  FirebaseAuth? get _auth =>
-      Firebase.apps.isNotEmpty ? FirebaseAuth.instance : null;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  User? get currentUser => _auth?.currentUser;
+  User? get currentUser => _auth.currentUser;
 
-  Stream<User?> get authState =>
-      _auth?.authStateChanges() ?? const Stream<User?>.empty();
+  Stream<User?> get authState => _auth.userChanges();
 
   Future<User?> signUp(String email, String password) async {
-    if (_auth == null) {
-      return null;
-    }
-
-    final result = await _auth!.createUserWithEmailAndPassword(
+    final result = await _auth.createUserWithEmailAndPassword(
       email: email,
       password: password,
     );
 
     await result.user!.sendEmailVerification();
 
-    // Create user profile in Firestore
     if (result.user != null) {
       final userProfile = UserProfile(
         uid: result.user!.uid,
         email: email,
-        displayName: email.split('@')[0], // Use email prefix as display name
+        displayName: email.split('@')[0],
         createdAt: DateTime.now(),
       );
       await _userService.createUserProfile(userProfile);
@@ -41,11 +33,7 @@ class AuthService {
   }
 
   Future<User?> login(String email, String password) async {
-    if (_auth == null) {
-      return null;
-    }
-
-    final result = await _auth!.signInWithEmailAndPassword(
+    final result = await _auth.signInWithEmailAndPassword(
       email: email,
       password: password,
     );
@@ -54,10 +42,6 @@ class AuthService {
   }
 
   Future logout() async {
-    if (_auth == null) {
-      return;
-    }
-
-    await _auth!.signOut();
+    await _auth.signOut();
   }
 }

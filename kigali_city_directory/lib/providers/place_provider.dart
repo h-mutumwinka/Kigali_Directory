@@ -13,18 +13,19 @@ class PlaceProvider extends ChangeNotifier {
   }
 
   Future addPlace(Place place) async {
-
     await _firestore.createPlace(place);
   }
 
   Future updatePlace(Place place) async {
-
     await _firestore.updatePlace(place);
   }
 
   Future deletePlace(String id) async {
-
     await _firestore.deletePlace(id);
+  }
+
+  Future seedData(String userId) async {
+    await _firestore.seedInitialData(userId);
   }
 
 }

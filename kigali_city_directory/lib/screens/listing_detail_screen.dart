@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../models/place_model.dart';
 import 'reviews_screen.dart';
 import 'booking_screen.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class DetailScreen extends StatelessWidget {
   final Place place;
@@ -111,20 +112,34 @@ class DetailScreen extends StatelessWidget {
               ),
               child: ClipRRect(
                 borderRadius: BorderRadius.circular(12),
-                child: GoogleMap(
-                  initialCameraPosition: CameraPosition(
-                    target: LatLng(place.latitude, place.longitude),
-                    zoom: 15,
-                  ),
-                  markers: {
-                    Marker(
-                      markerId: MarkerId(place.id),
-                      position: LatLng(place.latitude, place.longitude),
-                      infoWindow: InfoWindow(title: place.name),
+                child: FlutterMap(
+                  options: MapOptions(
+                    initialCenter: LatLng(place.latitude, place.longitude),
+                    initialZoom: 15,
+                    interactionOptions: const InteractionOptions(
+                      flags: InteractiveFlag.none,
                     ),
-                  },
-                  myLocationButtonEnabled: false,
-                  zoomControlsEnabled: false,
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                      userAgentPackageName: 'com.hero.kigali_city',
+                    ),
+                    MarkerLayer(
+                      markers: [
+                        Marker(
+                          point: LatLng(place.latitude, place.longitude),
+                          width: 40,
+                          height: 40,
+                          child: const Icon(
+                            Icons.location_pin,
+                            color: Colors.red,
+                            size: 40,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
