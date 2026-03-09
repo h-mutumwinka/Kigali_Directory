@@ -72,10 +72,10 @@ class _LoginScreenState extends State<LoginScreen> {
           message = 'Network error. Check your internet connection.';
           break;
         case 'operation-not-allowed':
-          message = 'Email/Password login is not enabled in Firebase Console.\nGo to Authentication → Sign-in method → Enable Email/Password.';
+          message = '';
           break;
         case 'channel-error':
-          message = 'Firebase connection error. Make sure SHA-1 fingerprint is added in Firebase Console.';
+          message = 'Firebase connection error';
           break;
         default:
           message = 'Error [${e.code}]: ${e.message ?? 'Login failed.'}';
