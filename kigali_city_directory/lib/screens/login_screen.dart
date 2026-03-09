@@ -41,7 +41,7 @@ class _LoginScreenState extends State<LoginScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Login successful!'),
+            content: Text(' Login successful!'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 2),
           ),
@@ -60,7 +60,7 @@ class _LoginScreenState extends State<LoginScreen> {
           message = 'Incorrect email or password. Please check and try again.';
           break;
         case 'invalid-email':
-          message = 'Invalid email address format.';
+          message = 'Invalid email address';
           break;
         case 'user-disabled':
           message = 'This account has been disabled.';
@@ -121,7 +121,7 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D1B2A), // Dark blue background
+      backgroundColor: const Color(0xFF0D1B2A), 
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -131,7 +131,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // App Logo/Icon
+                  
                   const Icon(
                     Icons.location_city,
                     size: 100,
@@ -139,7 +139,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 20),
                   const Text(
-                    'Kigali Directory',
+                    'Ikaze in Kigali City ',
                     style: TextStyle(
                       fontSize: 32,
                       fontWeight: FontWeight.bold,
@@ -148,7 +148,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 10),
                   const Text(
-                    'Find services and places in Kigali',
+                    'Find Quality services and places in Kigali'
+                    'Tubafitiye ibintu byiza Cyane',
                     style: TextStyle(
                       fontSize: 16,
                       color: Colors.white70,
@@ -156,7 +157,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Email Field
+                
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -179,9 +180,9 @@ class _LoginScreenState extends State<LoginScreen> {
                       return null;
                     },
                   ),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 14),
 
-                  // Password Field
+                  
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -211,14 +212,14 @@ class _LoginScreenState extends State<LoginScreen> {
                         return 'Please enter your password';
                       }
                       if (value.length < 6) {
-                        return 'Password must be at least 6 characters';
+                        return 'Password must be at least 5 characters';
                       }
                       return null;
                     },
                   ),
-                  const SizedBox(height: 24),
+                  const SizedBox(height: 22),
 
-                  // Login Button
+                  
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -235,7 +236,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           : const Text(
                               'Login',
                               style: TextStyle(
-                                fontSize: 18,
+                                fontSize: 16,
                                 color: Colors.white,
                               ),
                             ),
@@ -243,7 +244,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Sign Up Link
+                
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -261,7 +262,7 @@ class _LoginScreenState extends State<LoginScreen> {
                           );
                         },
                         child: const Text(
-                          'Sign Up',
+                          'Sign In',
                           style: TextStyle(
                             color: Colors.white,
                             fontWeight: FontWeight.bold,
