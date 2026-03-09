@@ -6,14 +6,14 @@ A Flutter mobile application for discovering and managing places in Kigali, Rwan
 
 ## Features
 
--  **Firebase Authentication** — Signup, login, logout with email verification
--  **Location Listings (CRUD)** — Create, read, update, and delete place listings
--  **Search & Filter** — Search by name, filter by category in real-time
--  **Interactive Map** — OpenStreetMap with markers for all listings
--  **Listing Detail** — Embedded map preview + Google Maps navigation launch
--  **My Listings** — View and manage only your own listings
--  **Settings** — User profile display, notification toggles, dark/light theme
--  **Real-time Firestore** — All changes reflect instantly across screens
+-  **Firebase Authentication** used to Signup, login, logout with email verification
+-  **Location Listings (CRUD)** used for Creating, reading, updating, and deleting place listings
+-  **Search & Filter** used to Search by name, filter by category in real-time
+-  **Interactive Map** using OpenStreetMap with markers for all listings
+-  **Listing Detail** used for Embedded map preview + Google Maps navigation launch
+-  **My Listings** used for View and manage only your own listings
+-  **Settings** used for User profile to display, notification toggles, dark/light theme
+-  **Real-time Firestore** used for all changes reflect instantly across screens
 
 ---
 
