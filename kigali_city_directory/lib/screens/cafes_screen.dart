@@ -26,7 +26,7 @@ class _CafesScreenState extends State<CafesScreen> {
 
       body: Column(
         children: [
-          // Search bar
+          
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: TextField(
@@ -43,7 +43,7 @@ class _CafesScreenState extends State<CafesScreen> {
             ),
           ),
 
-          // List of cafes
+          
           Expanded(
             child: StreamBuilder(
               stream: placeProvider.getPlaces(),
@@ -52,7 +52,7 @@ class _CafesScreenState extends State<CafesScreen> {
                   return const Center(child: CircularProgressIndicator());
                 }
 
-                // Filter by category "Cafe" and search query
+                
                 final cafes = snapshot.data!
                     .where((place) =>
                         place.category.toLowerCase() == "cafe" &&
@@ -72,7 +72,7 @@ class _CafesScreenState extends State<CafesScreen> {
                     return PlaceCard(
                       place: cafe,
                       onEdit: () {
-                        // Optional: Edit only if user owns this cafe
+                        
                         Navigator.push(
                           context,
                           MaterialPageRoute(
@@ -81,7 +81,7 @@ class _CafesScreenState extends State<CafesScreen> {
                         );
                       },
                       onDelete: () {
-                        // Optional: Delete only if user owns this cafe
+                      
                         placeProvider.deletePlace(cafe.id);
                       },
                     );
