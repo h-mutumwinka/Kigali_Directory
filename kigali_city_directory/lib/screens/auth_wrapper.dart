@@ -22,7 +22,7 @@ class AuthWrapper extends StatelessWidget {
       return const EmailVerificationScreen();
     }
 
-    // Seed initial Kigali places if Firestore is empty
+    
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<PlaceProvider>(context, listen: false).seedData(user.uid);
     });
