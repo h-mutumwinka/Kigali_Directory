@@ -43,7 +43,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('✅ Account created! Please verify your email.'),
+            content: Text(' Account created! Please verify your email.'),
             backgroundColor: Colors.green,
             duration: Duration(seconds: 3),
           ),
@@ -71,9 +71,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ $message'),
+            content: Text(' $message'),
             backgroundColor: Colors.red,
-            duration: const Duration(seconds: 3),
+            duration: const Duration(seconds: 2),
           ),
         );
       }
@@ -81,7 +81,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('❌ Sign up failed: ${e.toString()}'),
+            content: Text(' Sign up failed: ${e.toString()}'),
             backgroundColor: Colors.red,
             duration: const Duration(seconds: 3),
           ),
@@ -97,7 +97,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFF0D1B2A), // Dark blue background
+      backgroundColor: const Color(0xFF0D1B2A),
       appBar: AppBar(
         title: const Text('Create Account'),
         backgroundColor: Colors.blue,
@@ -111,7 +111,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // App Logo/Icon
+                  
                   const Icon(
                     Icons.person_add,
                     size: 80,
@@ -136,7 +136,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 40),
 
-                  // Email Field
+                  
                   TextFormField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
@@ -161,7 +161,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Password Field
+                  
                   TextFormField(
                     controller: _passwordController,
                     obscureText: _obscurePassword,
@@ -198,7 +198,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Confirm Password Field
+                  
                   TextFormField(
                     controller: _confirmPasswordController,
                     obscureText: _obscureConfirmPassword,
@@ -235,7 +235,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 24),
 
-                  // Sign Up Button
+              
                   SizedBox(
                     width: double.infinity,
                     height: 50,
@@ -260,7 +260,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   ),
                   const SizedBox(height: 16),
 
-                  // Login Link
+                  
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
