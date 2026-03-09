@@ -15,7 +15,7 @@ class DetailScreen extends StatelessWidget {
     final lat = place.latitude;
     final lng = place.longitude;
     
-    // Try Google Maps app first, fallback to web
+    
     final googleMapsUrl = Uri.parse('google.navigation:q=$lat,$lng');
     final fallbackUrl = Uri.parse(
       'https://www.google.com/maps/search/?api=1&query=$lat,$lng',
@@ -29,7 +29,7 @@ class DetailScreen extends StatelessWidget {
         await launchUrl(fallbackUrl, mode: LaunchMode.externalApplication);
       }
     } catch (e) {
-      // Fallback to web URL
+      
       await launchUrl(fallbackUrl, mode: LaunchMode.externalApplication);
     }
   }
@@ -39,15 +39,15 @@ class DetailScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Text(place.name),
-        backgroundColor: const Color(0xFF0D1B2A), // Dark blue AppBar
+        backgroundColor: const Color(0xFF0D1B2A), 
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            // Placeholder image
+            
             Container(
-              height: 180,
+              height: 150,
               width: double.infinity,
               decoration: BoxDecoration(
                 color: Colors.grey.shade300,
@@ -57,7 +57,7 @@ class DetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Name & category
+            
             Text(
               place.name,
               style: const TextStyle(
@@ -66,14 +66,14 @@ class DetailScreen extends StatelessWidget {
             Text("${place.category} • ${place.address}"),
             const SizedBox(height: 10),
 
-            // Description
+          
             Text(
               place.description,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 20),
 
-            // Contact
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -84,7 +84,7 @@ class DetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Location coordinates
+            
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -102,7 +102,7 @@ class DetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Embedded Map Preview
+            
             Container(
               height: 200,
               width: double.infinity,
@@ -145,7 +145,7 @@ class DetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-            // Book Now Button
+            
             ElevatedButton.icon(
               onPressed: () {
                 Navigator.push(
@@ -170,7 +170,7 @@ class DetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Navigation Button
+            
             ElevatedButton.icon(
               onPressed: _launchMapsNavigation,
               icon: const Icon(Icons.navigation, color: Colors.white),
@@ -188,10 +188,10 @@ class DetailScreen extends StatelessWidget {
             ),
             const SizedBox(height: 10),
 
-            // Buttons
+            
             ElevatedButton(
               onPressed: () {
-                // TODO: implement rating functionality
+              
               },
               child: const Text("Rate this service"),
             ),
