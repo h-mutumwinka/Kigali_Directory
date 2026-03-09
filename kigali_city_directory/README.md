@@ -1,19 +1,19 @@
 # Kigali City Directory
 
-A Flutter mobile application for discovering and managing places in Kigali, Rwanda. Built with Firebase Authentication, Cloud Firestore, Provider state management, and OpenStreetMap integration.
+A Flutter mobile application for discovering and managing places in Kigali, Rwanda which is built with Firebase Authentication, Cloud Firestore, Provider state management, and OpenStreetMap integration.
 
 ---
 
 ## Features
 
-- 🔐 **Firebase Authentication** — Signup, login, logout with email verification
-- 📍 **Location Listings (CRUD)** — Create, read, update, and delete place listings
-- 🔍 **Search & Filter** — Search by name, filter by category in real-time
-- 🗺️ **Interactive Map** — OpenStreetMap with markers for all listings
-- 📌 **Listing Detail** — Embedded map preview + Google Maps navigation launch
-- 👤 **My Listings** — View and manage only your own listings
-- ⚙️ **Settings** — User profile display, notification toggles, dark/light theme
-- ☁️ **Real-time Firestore** — All changes reflect instantly across screens
+-  **Firebase Authentication** — Signup, login, logout with email verification
+-  **Location Listings (CRUD)** — Create, read, update, and delete place listings
+-  **Search & Filter** — Search by name, filter by category in real-time
+-  **Interactive Map** — OpenStreetMap with markers for all listings
+-  **Listing Detail** — Embedded map preview + Google Maps navigation launch
+-  **My Listings** — View and manage only your own listings
+-  **Settings** — User profile display, notification toggles, dark/light theme
+-  **Real-time Firestore** — All changes reflect instantly across screens
 
 ---
 
@@ -21,7 +21,7 @@ A Flutter mobile application for discovering and managing places in Kigali, Rwan
 
 ### Prerequisites
 - Flutter SDK 3.10.4+
-- Firebase project: `kigali-city-81f21`
+- Firebase project: `kigali-city`
 - Android: `google-services.json` in `android/app/`
 
 ### Firebase Services Used
@@ -32,7 +32,7 @@ A Flutter mobile application for discovering and managing places in Kigali, Rwan
 
 ### Authentication Setup
 1. Firebase Console → Authentication → Sign-in method → Enable **Email/Password**
-2. Email verification is enforced — users cannot access the app until email is verified
+2. Email verification is enforced so that users cannot access the app until email is verified
 
 ### Firestore Setup
 1. Firebase Console → Firestore Database → Create database
@@ -106,7 +106,7 @@ Firebase   (FirebaseAuth, FirebaseFirestore)
 | `ThemeProvider` | Light/dark theme switching |
 | `BookingProvider` | Booking state management |
 
-**UI widgets never call Firebase directly** — all Firebase operations go through the service layer.
+**UI widgets never call Firebase directly** so all Firebase operations go through the service layer.
 
 ---
 
@@ -130,7 +130,8 @@ AuthWrapper
 
 ```bash
 # Clone the repository
-git clone <repo-url>
+git clone https://github.com/h-mutumwinka/Kigali_Directory.git
+cd Kigali_Directory
 cd kigali_city_directory
 
 # Install dependencies
