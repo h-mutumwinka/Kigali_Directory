@@ -24,9 +24,9 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
     if (!isEmailVerified) {
       sendVerificationEmail();
 
-      // Check email verification status every 3 seconds
+      
       timer = Timer.periodic(
-        const Duration(seconds: 3),
+        const Duration(seconds: 2),
         (_) => checkEmailVerified(),
       );
     }
@@ -39,7 +39,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
   }
 
   Future<void> checkEmailVerified() async {
-    // Reload user to get updated email verification status
+    
     await FirebaseAuth.instance.currentUser?.reload();
 
     setState(() {
@@ -83,7 +83,7 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
                 'Email Verified!',
                 style: TextStyle(color: Colors.white, fontSize: 22, fontWeight: FontWeight.bold),
               ),
-              SizedBox(height: 16),
+              SizedBox(height: 12),
               CircularProgressIndicator(color: Colors.green),
             ],
           ),
@@ -131,19 +131,19 @@ class _EmailVerificationScreenState extends State<EmailVerificationScreen> {
               child: const Column(
                 children: [
                   Text(
-                    '📧 Check your inbox (and spam folder)',
+                    'Check your inbox (and spam folder)',
                     style: TextStyle(color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 4),
                   Text(
-                    '🔗 Click the verification link in the email',
+                    '',
                     style: TextStyle(color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
-                  SizedBox(height: 8),
+                  SizedBox(height: 4),
                   Text(
-                    '✅ This screen will update automatically',
+                    '',
                     style: TextStyle(color: Colors.white70),
                     textAlign: TextAlign.center,
                   ),
