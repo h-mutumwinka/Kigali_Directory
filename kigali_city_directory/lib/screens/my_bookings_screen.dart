@@ -12,12 +12,12 @@ class MyBookingsScreen extends StatelessWidget {
     final authProvider = Provider.of<auth.AuthProvider>(context, listen: false);
     final userId = authProvider.user?.uid ?? '';
     
-    print('🔍 My Bookings - User ID: $userId');
+    print('My Bookings - User ID: $userId');
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Bookings'),
-        backgroundColor: const Color(0xFF0D1B2A), // Dark blue AppBar
+        backgroundColor: const Color(0xFF0D1B2A), 
       ),
       body: StreamBuilder(
         stream: bookingProvider.getUserBookings(userId),
@@ -28,7 +28,7 @@ class MyBookingsScreen extends StatelessWidget {
 
           final bookings = snapshot.data!;
           
-          print('🔍 Total bookings for $userId: ${bookings.length}');
+          print('Total bookings for $userId: ${bookings.length}');
 
           if (bookings.isEmpty) {
             return Center(
